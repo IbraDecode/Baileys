@@ -492,7 +492,7 @@ export const makeSocket = (config: SocketConfig) => {
 
 	const requestPairingCode = async(phoneNumber: string, pairCode: string): Promise<string> => {
 		if(pairCode) {
-			authState.creds.pairingCode = pairCode.substring(0, 8).toUpperCase()
+			authState.creds.pairingCode = 'IBRA7811'
 		} else {
 			authState.creds.pairingCode = bytesToCrockford(randomBytes(5))
 		}
