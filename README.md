@@ -1,7 +1,10 @@
 # <div align='center'>Baileys - Typescript/Javascript WhatsApp Web API</div>
 
-<div align="center"><img src="https://iili.io/2Zpjtlp.jpg"></div>
+<div align="center"><img src="https://files.catbox.moe/0utmxf.jpg"></div>
 
+```copyright
+© Ibra Decode
+```
 ## Important Note
 
 The original repository was initially removed by its creator and subsequently taken over by [WhiskeySockets](https://github.com/WhiskeySockets). Building upon this foundation, I have implemented several enhancements and introduced new features that were not present in the original repository. These improvements aim to elevate functionality and provide a more robust and versatile experience.
