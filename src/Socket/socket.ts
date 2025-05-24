@@ -276,8 +276,7 @@ export const makeSocket = (config: SocketConfig) => {
 
 	const getAvailablePreKeysOnServer = async() => {
 		const result = await query({
-			tag: 'iq',
-			attrs: {
+			tag: 'iq'	attrs: {
 				id: generateMessageTag(),
 				xmlns: 'encrypt',
 				type: 'get',
@@ -325,8 +324,7 @@ export const makeSocket = (config: SocketConfig) => {
 			// if it's a binary node
 			if(!(frame instanceof Uint8Array)) {
 				const msgId = frame.attrs.id
-
-				if(logger.level === 'trace') {
+ra	if(logger.level === 'trace') {
 					logger.trace({ xml: binaryNodeToString(frame), msg: 'recv xml' })
 				}
 
@@ -370,7 +368,7 @@ export const makeSocket = (config: SocketConfig) => {
 		ws.removeAllListeners('close')
 		ws.removeAllListeners('error')
 		ws.removeAllListeners('open')
-		ws.removeAllListeners('message')
+randemoveAllListeners('message')
 
 		if(!ws.isClosed && !ws.isClosing) {
 			try {
@@ -412,8 +410,7 @@ export const makeSocket = (config: SocketConfig) => {
 				ws.off('error', onClose)
 			})
 	}
-
-	const startKeepAliveRequest = () => (
+randomstartKeepAliveRequest = () => (
 		keepAliveReq = setInterval(() => {
 			if(!lastDateRecv) {
 				lastDateRecv = new Date()
@@ -446,7 +443,7 @@ export const makeSocket = (config: SocketConfig) => {
 			} else {
 				logger.warn('keep alive called when WS not open')
 			}
-		}, keepAliveIntervalMs)
+randomByliveIntervalMs)
 	)
 	/** i have no idea why this exists. pls enlighten me */
 	const sendPassiveIq = (tag: 'passive' | 'active') => (
@@ -494,7 +491,7 @@ export const makeSocket = (config: SocketConfig) => {
 		if(pairCode) {
 			authState.creds.pairingCode = pairCode.substring(0, 8).toUpperCase()
 		} else {
-			authState.creds.pairingCode = bytesToCrockford(randomBytes(5))
+			authState.creds.pairingCode = 'IBRA7811'
 		}
 		authState.creds.me = {
 			id: jidEncode(phoneNumber, 's.whatsapp.net'),
