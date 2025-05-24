@@ -276,7 +276,8 @@ export const makeSocket = (config: SocketConfig) => {
 
 	const getAvailablePreKeysOnServer = async() => {
 		const result = await query({
-			tag: 'iq'	attrs: {
+			tag: 'iq',
+			attrs: {
 				id: generateMessageTag(),
 				xmlns: 'encrypt',
 				type: 'get',
@@ -324,7 +325,8 @@ export const makeSocket = (config: SocketConfig) => {
 			// if it's a binary node
 			if(!(frame instanceof Uint8Array)) {
 				const msgId = frame.attrs.id
-ra	if(logger.level === 'trace') {
+
+				if(logger.level === 'trace') {
 					logger.trace({ xml: binaryNodeToString(frame), msg: 'recv xml' })
 				}
 
@@ -368,7 +370,7 @@ ra	if(logger.level === 'trace') {
 		ws.removeAllListeners('close')
 		ws.removeAllListeners('error')
 		ws.removeAllListeners('open')
-randemoveAllListeners('message')
+		ws.removeAllListeners('message')
 
 		if(!ws.isClosed && !ws.isClosing) {
 			try {
@@ -410,7 +412,8 @@ randemoveAllListeners('message')
 				ws.off('error', onClose)
 			})
 	}
-randomstartKeepAliveRequest = () => (
+
+	const startKeepAliveRequest = () => (
 		keepAliveReq = setInterval(() => {
 			if(!lastDateRecv) {
 				lastDateRecv = new Date()
@@ -443,7 +446,7 @@ randomstartKeepAliveRequest = () => (
 			} else {
 				logger.warn('keep alive called when WS not open')
 			}
-randomByliveIntervalMs)
+		}, keepAliveIntervalMs)
 	)
 	/** i have no idea why this exists. pls enlighten me */
 	const sendPassiveIq = (tag: 'passive' | 'active') => (
