@@ -224,7 +224,7 @@ export const prepareWAMessageMedia = async(
 	])
 		.finally(
 			async() => {
-				if (!Buffer.isBuffer(encWriteStream)) {
+				if(!Buffer.isBuffer(encWriteStream)) {
 					encWriteStream.destroy()
 				}
 				// remove tmp files
@@ -435,7 +435,7 @@ export const generateWAMessageContent = async(
 				title: message.call.title
 			}
 		}
-	} else if ('paymentInvite' in message) {
+	} else if('paymentInvite' in message) {
 		m.paymentInviteMessage = {
 			serviceType: message.paymentInvite.type, 
 			expiryTimestamp: message.paymentInvite.expiry
@@ -475,7 +475,7 @@ export const generateWAMessageContent = async(
 				productImage: imageMessage,
 			}
 		})
-	} else if ('order' in message) {
+	} else if('order' in message) {
 		m.orderMessage = WAProto.Message.OrderMessage.fromObject({
 			orderId: message.order.id,
 			thumbnail: message.order.thumbnail,
@@ -544,7 +544,7 @@ export const generateWAMessageContent = async(
 		m.newsletterAdminInviteMessage.newsletterJid = message.inviteAdmin.jid;
 		m.newsletterAdminInviteMessage.newsletterName = message.inviteAdmin.subject;
 		m.newsletterAdminInviteMessage.jpegThumbnail = message.inviteAdmin.thumbnail;
-	} else if ('requestPayment' in message) {  
+	} else if('requestPayment' in message) {  
 		const sticker = message?.requestPayment?.sticker ?
 			await prepareWAMessageMedia(
 				{ sticker: message?.requestPayment?.sticker, ...options },
@@ -661,24 +661,24 @@ export const generateWAMessageContent = async(
 			title: message.title,
 			footerText: message.footer,
 			description: message.text,
-			listType: message.hasOwnProperty('listType') ? message.listType : proto.Message.ListMessage.ListType.PRODUCT_LIST
+			listType: proto.Message.ListMessage.ListType.SINGLE_SELECT
 		}
 
 		m = { listMessage }
 	}
 
-	if ('interactiveButtons' in message && !!message.interactiveButtons) {
+	if('interactiveButtons' in message && !!message.interactiveButtons) {
 		const interactiveMessage: proto.Message.IInteractiveMessage = {
 			nativeFlowMessage: WAProto.Message.InteractiveMessage.NativeFlowMessage.fromObject({
 				buttons: message.interactiveButtons,
 			})
 		};
 
-		if ('text' in message) {
+		if('text' in message) {
 			interactiveMessage.body = {
 				text: message.text
 			};
-		} else if ('caption' in message) {
+		} else if('caption' in message) {
 			interactiveMessage.body = {
 				text: message.caption
 			}
@@ -692,13 +692,13 @@ export const generateWAMessageContent = async(
 			Object.assign(interactiveMessage.header, m);
 		}
 
-		if ('footer' in message && !!message.footer) {
+		if('footer' in message && !!message.footer) {
 			interactiveMessage.footer = {
 				text: message.footer
 			};
 		}
 
-		if ('title' in message && !!message.title) {
+		if('title' in message && !!message.title) {
 			interactiveMessage.header = {
 				title: message.title,
 				subtitle: message.subtitle,
@@ -708,29 +708,29 @@ export const generateWAMessageContent = async(
 			Object.assign(interactiveMessage.header, m);
 		}
 
-		if ('contextInfo' in message && !!message.contextInfo) {
+		if('contextInfo' in message && !!message.contextInfo) {
 			interactiveMessage.contextInfo = message.contextInfo;
 		}
 
-		if ('mentions' in message && !!message.mentions) {
+		if('mentions' in message && !!message.mentions) {
 			interactiveMessage.contextInfo = { mentionedJid: message.mentions };
 		}
 
 		m = { interactiveMessage };
 	}
 
-	if ('shop' in message && !!message.shop) {
+	if('shop' in message && !!message.shop) {
 		const interactiveMessage: proto.Message.IInteractiveMessage = {
 			shopStorefrontMessage: WAProto.Message.InteractiveMessage.ShopMessage.fromObject({
 				surface: message.shop,
 				id: message.id
 			})
 		};
-		if ('text' in message) {
+		if('text' in message) {
 			interactiveMessage.body = {
 				text: message.text
 			};
-		} else if ('caption' in message) {
+		} else if('caption' in message) {
 			interactiveMessage.body = {
 				text: message.caption
 			}
@@ -741,12 +741,12 @@ export const generateWAMessageContent = async(
 			};
 			Object.assign(interactiveMessage.header, m);
 		}
-		if ('footer' in message && !!message.footer) {
+		if('footer' in message && !!message.footer) {
 			interactiveMessage.footer = {
 				text: message.footer
 			};
 		}
-		if ('title' in message && !!message.title) {
+		if('title' in message && !!message.title) {
 			interactiveMessage.header = {
 				title: message.title,
 				subtitle: message.subtitle,
@@ -754,10 +754,10 @@ export const generateWAMessageContent = async(
 			};
 			Object.assign(interactiveMessage.header, m);
 		}
-		if ('contextInfo' in message && !!message.contextInfo) {
+		if('contextInfo' in message && !!message.contextInfo) {
 			interactiveMessage.contextInfo = message.contextInfo;
 		}
-		if ('mentions' in message && !!message.mentions) {
+		if('mentions' in message && !!message.mentions) {
 			interactiveMessage.contextInfo = { mentionedJid: message.mentions };
 		}
 		m = { interactiveMessage };
@@ -942,6 +942,9 @@ export const normalizeMessageContent = (content: WAMessageContent | null | undef
 			 || message?.pollCreationMessageV5
 			 || message?.statusAddYours
 			 || message?.groupStatusMessage
+			 || message?.limitSharingMessage
+			 || message?.botTaskMessage
+			 || message?.questionMessage
 		 )
 	 }
 }
