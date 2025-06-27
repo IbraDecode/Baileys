@@ -1,18 +1,18 @@
 {
-  "name": "ditss-baileys",
-  "version": "6.8.3",
+  "name": "baileys",
+  "version": "6.8.4",
   "description": "Custom Baileys WhatsApp API",
   "keywords": [
-    "baileys", "baileys-mod", "wabot", "whatsapp",
+    "bailey","baileys", "baileys-mod", "wabot", "whatsapp",
     "js-whatsapp", "whatsapp-api", "whatsapp-web", "whatsapp-bot",
-    "automation", "multi-device"
+    "ts-baileys", "whiskeysockets", "wa-proto", "web-sockets", "ibra-decode"
   ],
-  "homepage": "https://github.com/nstar-y/bail",
+  "homepage": "https://github.com/ditss-dev/baileys",
   "repository": {
-    "url": "git+ssh://git@github.com/nstar-y/bail.git"
+    "url": "git+ssh://git@github.com/ditss-dev/baileys.git"
   },
   "license": "MIT",
-  "author": "Adhiraj Singh",
+  "author": "ibra decode",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
