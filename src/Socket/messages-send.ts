@@ -4,13 +4,55 @@ import NodeCache from '@cacheable/node-cache'
 import { Readable } from 'stream'
 import { proto } from '../../WAProto'
 import { DEFAULT_CACHE_TTLS, WA_DEFAULT_EPHEMERAL } from '../Defaults'
-import { AnyMessageContent, MediaConnInfo, MessageReceiptType, MessageRelayOptions, MiscMessageGenerationOptions, SocketConfig, WAMediaUploadFunctionOpts, WAMessageKey } from '../Types'
-import { aggregateMessageKeysNotFromMe, assertMediaContent, bindWaitForEvent, decryptMediaRetryData, encodeNewsletterMessage, encodeSignedDeviceIdentity, encodeWAMessage, encryptMediaRetryRequest, extractDeviceJids, generateMessageID, generateMessageIDV2, generateWAMessage, getStatusCodeForMediaRetry, getUrlFromDirectPath, getWAUploadToServer, normalizeMessageContent, parseAndInjectE2ESessions, unixTimestampSeconds } from '../Utils'
+import {
+	AnyMessageContent,
+	MediaConnInfo,
+	MessageReceiptType,
+	MessageRelayOptions,
+	MiscMessageGenerationOptions,
+	SocketConfig,
+	WAMediaUploadFunctionOpts,
+	WAMessageKey
+} from '../Types'
+import { 
+	aggregateMessageKeysNotFromMe,
+	assertMediaContent,
+	bindWaitForEvent,
+	decryptMediaRetryData,
+	encodeNewsletterMessage,
+	encodeSignedDeviceIdentity,
+	encodeWAMessage,
+	encryptMediaRetryRequest,
+	extractDeviceJids,
+	generateMessageID,
+	generateMessageIDV2,
+	generateWAMessage,
+	getContentType,
+	getStatusCodeForMediaRetry,
+	getUrlFromDirectPath,
+	getWAUploadToServer,
+	normalizeMessageContent,
+	parseAndInjectE2ESessions,
+	unixTimestampSeconds
+} from '../Utils'
 import { getUrlInfo } from '../Utils/link-preview'
-import { areJidsSameUser, BinaryNode, BinaryNodeAttributes, getBinaryNodeChild, getBinaryNodeChildren, isJidGroup, isJidNewsletter, isJidUser, jidDecode, jidEncode, jidNormalizedUser, JidWithDevice, S_WHATSAPP_NET } from '../WABinary'
+import {
+	areJidsSameUser,
+	BinaryNode,
+	BinaryNodeAttributes,
+	getBinaryNodeChild,
+	getBinaryNodeChildren,
+	isJidGroup,
+	isJidNewsletter,
+	isJidUser,
+	jidDecode,
+	jidEncode,
+	jidNormalizedUser,
+	JidWithDevice,
+	S_WHATSAPP_NET
+} from '../WABinary'
 import { USyncQuery, USyncUser } from '../WAUSync'
 import { makeNewsletterSocket } from './newsletter'
-import ListType = proto.Message.ListMessage.ListType;
 
 export const makeMessagesSocket = (config: SocketConfig) => {
 	const {
@@ -75,9 +117,9 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 	}
 
 	/**
-     * generic send receipt function
-     * used for receipts of phone call, read, delivery etc.
-     * */
+	 * generic send receipt function
+	 * used for receipts of phone call, read, delivery etc.
+	 * */
 	const sendReceipt = async(jid: string, participant: string | undefined, messageIds: string[], type: MessageReceiptType) => {
 		const node: BinaryNode = {
 			tag: 'receipt',
@@ -280,16 +322,16 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 	) => {
 		let patched = await patchMessageBeforeSending(message, jids)
 		if(!Array.isArray(patched)) {
-		  patched = jids ? jids.map(jid => ({ recipientJid: jid, ...patched })) : [patched]
+			patched = jids ? jids.map(jid => ({ recipientJid: jid, ...patched })) : [patched]
 		}
 
 		let shouldIncludeDeviceIdentity = false
 		const nodes = await Promise.all(
 			patched.map(
 				async patchedMessageWithJid => {
-				  const { recipientJid: jid, ...patchedMessage } = patchedMessageWithJid
-				  if(!jid) {
-					  return {} as BinaryNode
+					const { recipientJid: jid, ...patchedMessage } = patchedMessageWithJid
+					if(!jid) {
+						return {} as BinaryNode
 					}
 					const bytes = encodeWAMessage(patchedMessage)
 					const { type, ciphertext } = await signalRepository
@@ -330,7 +372,7 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 		const { user, server } = jidDecode(jid)!
 		const statusJid = 'status@broadcast'
 		const isGroup = server === 'g.us'
-		const isNewsletter = server == 'newsletter'
+		const isNewsletter = server === 'newsletter'
 		const isStatus = jid === statusJid
 		const isLid = server === 'lid'
 
@@ -418,7 +460,7 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 					const patched = await patchMessageBeforeSending(message)
 
 					if(Array.isArray(patched)) {
-					  throw new Boom('Per-jid patching is not supported in groups')
+						throw new Boom('Per-jid patching is not supported in groups')
 					}
 
 					const bytes = encodeWAMessage(patched)
@@ -470,14 +512,14 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 
 					await authState.keys.set({ 'sender-key-memory': { [jid]: senderKeyMap } })
 				} else if(isNewsletter) {
-				    // Message edit
-					if (message.protocolMessage?.editedMessage) {
+					// Message edit
+					if(message.protocolMessage?.editedMessage) {
 						msgId = message.protocolMessage.key?.id!
 						message = message.protocolMessage.editedMessage
 					}
 
 					// Message delete
-					if (message.protocolMessage?.type === proto.Message.ProtocolMessage.Type.REVOKE) {
+					if(message.protocolMessage?.type === proto.Message.ProtocolMessage.Type.REVOKE) {
 						msgId = message.protocolMessage.key?.id!
 						message = {}
 					}
@@ -485,7 +527,7 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 					const patched = await patchMessageBeforeSending(message, [])
 
 					if(Array.isArray(patched)) {
-					  throw new Boom('Per-jid patching is not supported in channel')
+						throw new Boom('Per-jid patching is not supported in channel')
 					}
 
 					const bytes = encodeNewsletterMessage(patched)
@@ -559,7 +601,7 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 					tag: 'message',
 					attrs: {
 						id: msgId!,
-						type: isNewsletter ? getTypeMessage(message) : getMessageType(message),
+						type: isNewsletter ? getTypeMessage(message) : 'text',
 						...(additionalAttributes || {})
 					},
 					content: binaryNodeContent
@@ -591,30 +633,22 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 					logger.debug({ jid }, 'adding device identity')
 				}
 
-				const buttonType = getButtonType(message)
-				if(buttonType) {
-					(stanza.content as BinaryNode[]).push({
-						tag: 'biz',
-						attrs: { },
-						content: [
-							{
-								tag: buttonType,
-								attrs: getButtonArgs(message),
-							}
-						]
-					})
-
-					logger.debug({ jid }, 'adding business node')
+				if(additionalNodes && additionalNodes.length > 0) {
+					(stanza.content as BinaryNode[]).push(...additionalNodes);
 				}
 
-				if(additionalNodes && additionalNodes.length > 0) {
-                   (stanza.content as BinaryNode[]).push(...additionalNodes);
-				} else {
-				   if((isJidGroup(jid) || isJidUser(jid)) && (message?.viewOnceMessage?.message?.interactiveMessage || message?.viewOnceMessageV2?.message?.interactiveMessage || message?.viewOnceMessageV2Extension?.message?.interactiveMessage || message?.interactiveMessage) || (message?.viewOnceMessage?.message?.buttonsMessage || message?.viewOnceMessageV2?.message?.buttonsMessage || message?.viewOnceMessageV2Extension?.message?.buttonsMessage || message?.buttonsMessage)) {
-					(stanza.content as BinaryNode[]).push({
-						tag: 'biz',
-						attrs: {},
-						content: [{
+				const content = normalizeMessageContent(message)!
+				const contentType = getContentType(content)!
+
+				if((isJidGroup(jid) || isJidUser(jid)) && (
+					contentType === 'interactiveMessage' ||
+					contentType === 'buttonsMessage' ||
+					contentType === 'listMessage'
+				)) {
+					const bizNode: BinaryNode = { tag: 'biz', attrs: {} }
+
+					if((message?.viewOnceMessage?.message?.interactiveMessage || message?.viewOnceMessageV2?.message?.interactiveMessage || message?.viewOnceMessageV2Extension?.message?.interactiveMessage || message?.interactiveMessage) || (message?.viewOnceMessage?.message?.buttonsMessage || message?.viewOnceMessageV2?.message?.buttonsMessage || message?.viewOnceMessageV2Extension?.message?.buttonsMessage || message?.buttonsMessage)) {
+						bizNode.content = [{
 							tag: 'interactive',
 							attrs: {
 								type: 'native_flow',
@@ -622,11 +656,21 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 							},
 							content: [{
 								tag: 'native_flow',
-								attrs: { name: 'quick_reply' }
+								attrs: { v: '9', name: 'mixed' }
 							}]
 						}]
-				    });
-				  }
+					} else if(message?.listMessage) {
+						// list message only support in private chat
+						bizNode.content = [{
+							tag: 'list',
+							attrs: {
+								type: 'product_list',
+								v: '2'
+							}
+						}]
+					}
+
+					(stanza.content as BinaryNode[]).push(bizNode);
 				}
 
 				logger.debug({ msgId }, `sending message to ${participants.length} devices`)
@@ -638,29 +682,22 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 		return msgId
 	}
 
-	const getMessageType = (message: proto.IMessage) => {
-		if(message.pollCreationMessage || message.pollCreationMessageV2 || message.pollCreationMessageV3 || message.pollUpdateMessage) {
-			return 'poll'
-		}
-		return 'text'
-	}
-
 	const getTypeMessage = (msg: proto.IMessage) => {
-		if (msg.viewOnceMessage) {
+		if(msg.viewOnceMessage) {
 			return getTypeMessage(msg.viewOnceMessage.message!)
-		} else if (msg.viewOnceMessageV2) {
+		} else if(msg.viewOnceMessageV2) {
 			return getTypeMessage(msg.viewOnceMessageV2.message!)
-		} else if (msg.viewOnceMessageV2Extension) {
+		} else if(msg.viewOnceMessageV2Extension) {
 			return getTypeMessage(msg.viewOnceMessageV2Extension.message!)
-		} else if (msg.ephemeralMessage) {
+		} else if(msg.ephemeralMessage) {
 			return getTypeMessage(msg.ephemeralMessage.message!)
-		} else if (msg.documentWithCaptionMessage) {
+		} else if(msg.documentWithCaptionMessage) {
 			return getTypeMessage(msg.documentWithCaptionMessage.message!)
-		} else if (msg.reactionMessage) {
+		} else if(msg.reactionMessage) {
 			return 'reaction'
-		} else if (msg.pollCreationMessage || msg.pollCreationMessageV2 || msg.pollCreationMessageV3 || msg.pollUpdateMessage) {
+		} else if(msg.pollCreationMessage || msg.pollCreationMessageV2 || msg.pollCreationMessageV3 || msg.pollUpdateMessage) {
 			return 'poll'
-		} else if (getMediaType(msg)) {
+		} else if(getMediaType(msg)) {
 			return 'media'
 		} else {
 			return 'text'
@@ -698,36 +735,6 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 			return 'native_flow_response'
 		} else if(message.groupInviteMessage) {
 			return 'url'
-		}
-	}
-
-	const getButtonType = (message: proto.IMessage) => {
-		if(message.buttonsMessage) {
-			return 'buttons'
-		} else if(message.buttonsResponseMessage) {
-			return 'buttons_response'
-		} else if(message.interactiveResponseMessage) {
-			return 'interactive_response'
-		} else if(message.listMessage) {
-			return 'list'
-		} else if(message.listResponseMessage) {
-			return 'list_response'
-		}
-	}
-
-	const getButtonArgs = (message: proto.IMessage): BinaryNode['attrs'] => {
-		if(message.templateMessage) {
-			// TODO: Add attributes
-			return {}
-		} else if(message.listMessage) {
-			const type = message.listMessage.listType
-			if(!type) {
-				throw new Boom('Expected list type inside message')
-			}
-
-			return { v: '2', type: ListType[type].toLowerCase() }
-		} else {
-			return {}
 		}
 	}
 
@@ -772,10 +779,9 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 		relayMessage,
 		sendReceipt,
 		sendReceipts,
-		getButtonArgs,
 		readMessages,
 		refreshMediaConn,
-	        waUploadToServer,
+		waUploadToServer,
 		fetchPrivacySettings,
 		getUSyncDevices,
 		createParticipantNodes,
@@ -837,6 +843,19 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 			options: MiscMessageGenerationOptions = { }
 		) => {
 			const userJid = authState.creds.me!.id
+			if(!options.ephemeralExpiration) {
+				if(isJidGroup(jid)) {
+					const groups = await sock.groupQuery(jid, 'get', [{
+						tag: 'query',
+						attrs: {
+							request: 'interactive'
+						}
+					}])
+					const metadata = getBinaryNodeChild(groups, 'group')
+					const expiration = getBinaryNodeChild(metadata, 'ephemeral')?.attrs?.expiration || 0
+					options.ephemeralExpiration = expiration
+				}
+			}
 			if(
 				typeof content === 'object' &&
 				'disappearingMessagesInChat' in content &&
@@ -925,7 +944,7 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 					})
 				}
 
-				if (mediaHandle) {
+				if(mediaHandle) {
 					additionalAttributes['media_id'] = mediaHandle
 				}
 
