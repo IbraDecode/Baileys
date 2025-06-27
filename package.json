@@ -7,9 +7,9 @@
     "js-whatsapp", "whatsapp-api", "whatsapp-web", "whatsapp-bot",
     "ts-baileys", "whiskeysockets", "wa-proto", "web-sockets", "ibra-decode"
   ],
-  "homepage": "https://github.com/ditss-dev/baileys",
+  "homepage": "https://github.com/IbraDecode/baileys",
   "repository": {
-    "url": "git+ssh://git@github.com/ditss-dev/baileys.git"
+    "url": "git+ssh://git@github.com/IbraDecode/baileys.git"
   },
   "license": "MIT",
   "author": "ibra decode",
