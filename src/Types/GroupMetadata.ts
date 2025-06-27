@@ -1,6 +1,12 @@
 import { Contact } from './Contact'
 
-export type GroupParticipant = (Contact & { isAdmin?: boolean, isSuperAdmin?: boolean, admin?: 'admin' | 'superadmin' | null, phoneNumber?: string | undefined })
+export type GroupParticipant = (Contact & {
+    isAdmin?: boolean,
+    isSuperAdmin?: boolean,
+    admin?: 'admin' | 'superadmin' | null,
+    jid?: string,
+    lid?: string
+})
 
 export type ParticipantAction = 'add' | 'remove' | 'promote' | 'demote' | 'modify'
 
@@ -11,18 +17,19 @@ export type RequestJoinMethod = 'invite_link' | 'linked_group_join' | 'non_admin
 export interface GroupMetadata {
     id: string
     /** group uses 'lid' or 'pn' to send messages */
-    addressingMode: "pn" | "lid"
+    addressingMode: 'pn' | 'lid'
     owner: string | undefined
+    ownerLid?: string | undefined
     subject: string
     /** group subject owner */
     subjectOwner?: string
-    subjectOwnerPhoneNumber?: string
+    subjectOwnerLid?: string
     /** group subject modification date */
     subjectTime?: number
     creation?: number
     desc?: string
     descOwner?: string
-    descOwnerPhoneNumber?: string
+    descOwnerLid?: string
     descId?: string
     descTime?: number
     /** if this group is part of a community, it returns the jid of the community to which it belongs */
