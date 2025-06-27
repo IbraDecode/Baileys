@@ -1,5 +1,7 @@
 import { Boom } from '@hapi/boom'
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
+import FormData from 'form-data'
+import * as cheerio from 'cheerio'
 import { exec } from 'child_process'
 import * as Crypto from 'crypto'
 import { once } from 'events'
@@ -7,6 +9,7 @@ import { createReadStream, createWriteStream, promises as fs, writeFileSync, Wri
 import type { IAudioMetadata } from 'music-metadata'
 import { tmpdir } from 'os'
 import { join } from 'path'
+import * as path from 'path'
 import Jimp from 'jimp'
 import { Readable, Transform } from 'stream'
 import { URL } from 'url'
@@ -74,22 +77,179 @@ export async function getMediaKeys(buffer: Uint8Array | string | null | undefine
 	}
 }
 
-/** Extracts video thumb using FFMPEG */
-const extractVideoThumb = async(
-	path: string,
-	destPath: string,
-	time: string,
-	size: { width: number, height: number },
-) => new Promise((resolve, reject) => {
-    	const cmd = `ffmpeg -ss ${time} -i ${path} -y -vf scale=${size.width}:-1 -vframes 1 -f image2 ${destPath}`
-    	exec(cmd, (err) => {
-    		if(err) {
-			reject(err)
-		} else {
-			resolve()
+interface UploadService {
+	name: string
+	url: string
+	buildForm: () => FormData
+	parseResponse: (res: AxiosResponse<any>) => string
+}
+
+export async function uploadFile(buffer: Buffer, logger?: ILogger): Promise<string> {
+	const { fromBuffer } = await import('file-type')
+	const fileType = await fromBuffer(buffer)
+	if(!fileType) throw new Error("Failed to detect file type.")
+
+	const { ext, mime } = fileType
+
+	const services: UploadService[] = [
+		{
+			name: "catbox",
+			url: "https://catbox.moe/user/api.php",
+			buildForm: () => {
+				const form = new FormData()
+				form.append("fileToUpload", buffer, {
+					filename: `file.${ext}`,
+					contentType: mime || "application/octet-stream"
+				})
+				form.append("reqtype", "fileupload")
+				return form
+			},
+			parseResponse: res => res.data as string
+		},
+		{
+			name: "pdi.moe",
+			url: "https://scdn.pdi.moe/upload",
+			buildForm: () => {
+				const form = new FormData()
+				form.append("file", buffer, {
+					filename: `file.${ext}`,
+					contentType: mime
+				})
+				return form
+			},
+			parseResponse: res => res.data.result.url as string
+		},
+		{
+			name: "qu.ax",
+			url: "https://qu.ax/upload.php",
+			buildForm: () => {
+				const form = new FormData()
+				form.append("files[]", buffer, {
+					filename: `file.${ext}`,
+					contentType: mime || "application/octet-stream"
+				})
+				return form
+			},
+			parseResponse: res => {
+				if(!res.data?.files?.[0]?.url) throw new Error("Failed to get URL from qu.ax")
+				return res.data.files[0].url
+			}
+		},
+		{
+			name: "uguu.se",
+			url: "https://uguu.se/upload.php",
+			buildForm: () => {
+				const form = new FormData()
+				form.append("files[]", buffer, {
+					filename: `file.${ext}`,
+					contentType: mime || "application/octet-stream"
+				})
+				return form
+			},
+			parseResponse: res => {
+				if(!res.data?.files?.[0]?.url) throw new Error("Failed to get URL from uguu.se")
+				return res.data.files[0].url
+			}
+		},
+		{
+			name: "tmpfiles",
+			url: "https://tmpfiles.org/api/v1/upload",
+			buildForm: () => {
+				const form = new FormData()
+				form.append("file", buffer, {
+					filename: `file.${ext}`,
+					contentType: mime
+				})
+				return form
+			},
+			parseResponse: res => {
+				const match = (res.data.data.url as string).match(/https:\/\/tmpfiles\.org\/(.*)/)
+				if(!match) throw new Error("Failed to parse tmpfiles URL.")
+				return `https://tmpfiles.org/dl/${match[1]}`
+			}
 		}
-    	})
-}) as Promise<void>
+	]
+
+	for (const service of services) {
+		try {
+			const form = service.buildForm()
+			const res = await axios.post(service.url, form, {
+				headers: form.getHeaders()
+			})
+			const url = service.parseResponse(res)
+			return url
+		} catch (error) {
+			logger?.debug(`[${service.name}] eror:`, error?.message || error)
+		}
+	}
+
+	throw new Error("All upload services failed.")
+}
+
+export async function vid2jpg(videoUrl: string): Promise<string> {
+	try {
+		const { data } = await axios.get(
+			`https://ezgif.com/video-to-jpg?url=${encodeURIComponent(videoUrl)}`
+		)
+		const $ = cheerio.load(data)
+
+		const fileToken = $('input[name="file"]').attr("value")
+		if(!fileToken) {
+			throw new Error("Failed to retrieve file token. The video URL may be invalid or inaccessible.")
+		}
+
+		const formData = new URLSearchParams()
+		formData.append("file", fileToken)
+		formData.append("end", "1")
+		formData.append("video-to-jpg", "Convert to JPG!")
+
+		const convert = await axios.post(
+			`https://ezgif.com/video-to-jpg/${fileToken}`,
+			formData
+		)
+		const $2 = cheerio.load(convert.data)
+
+		let imageUrl = $2("#output img").first().attr("src")
+		if(!imageUrl) {
+			throw new Error("Could not locate the converted image output.")
+		}
+
+		if(imageUrl.startsWith("//")) {
+			imageUrl = "https:" + imageUrl
+		} else if(imageUrl.startsWith("/")) {
+			const cdnMatch = imageUrl.match(/\/(s\d+\..+?)\/.*/)
+			if(cdnMatch) {
+				imageUrl = "https://" + imageUrl.slice(2)
+			} else {
+				imageUrl = "https://ezgif.com" + imageUrl
+			}
+		}
+
+		return imageUrl
+	} catch (error) {
+		throw new Error("Failed to convert video to JPG: " + error.message)
+	}
+}
+
+/**
+ * Originally written by Techwiz (https://github.com/techwiz37)
+ * Modified for customization and improvements
+ */
+export const extractVideoThumb = async(videoPath: string) => {
+	const videoBuffer = await fs.readFile(videoPath)
+	const dataUrl = await uploadFile(videoBuffer)
+
+	if(!dataUrl || typeof dataUrl !== 'string') {
+		throw new Error('Failed to upload video: Invalid or missing URL')
+	}
+
+	const jpgUrl = await vid2jpg(dataUrl)
+	const { data: imageBuffer } = await axios.get<Buffer>(jpgUrl, {
+		responseType: 'arraybuffer',
+	})
+
+	return imageBuffer
+}
 
 export const extractImageThumb = async(bufferOrFilePath: Readable | Buffer | string, width = 32) => {
 	if(bufferOrFilePath instanceof Readable) {
@@ -292,12 +452,18 @@ export async function generateThumbnail(
 			}
 		}
 	} else if(mediaType === 'video') {
-		const imgFilename = join(getTmpFilesDirectory(), generateMessageIDV2() + '.jpg')
 		try {
-			await extractVideoThumb(file, imgFilename, '00:00:00', { width: 32, height: 32 })
-			const buff = await fs.readFile(imgFilename)
-			thumbnail = buff.toString('base64')
-
+			const thumbnailBuffer = await extractVideoThumb(file)
+			const imgFilename = join(getTmpFilesDirectory(), generateMessageIDV2() + '.jpg')
+			await fs.writeFile(imgFilename, thumbnailBuffer)
+			const { buffer: processedThumbnailBuffer, original } = await extractImageThumb(imgFilename)
+			thumbnail = processedThumbnailBuffer.toString('base64')
+			if(original.width && original.height) {
+				originalImageDimensions = {
+					width: original.width,
+					height: original.height,
+				}
+			}
 			await fs.unlink(imgFilename)
 		} catch(err) {
 			options.logger?.debug('could not generate video thumb: ' + err)
@@ -648,7 +814,7 @@ export const getWAUploadToServer = (
 		const hosts = [ ...customUploadHosts, ...uploadInfo.hosts ]
 
 		const chunks: Buffer[] | Buffer = []
-		if (!Buffer.isBuffer(stream)) {
+		if(!Buffer.isBuffer(stream)) {
 			for await (const chunk of stream) {
 				chunks.push(chunk)
 			}
@@ -657,7 +823,7 @@ export const getWAUploadToServer = (
 		const reqBody = Buffer.isBuffer(stream) ? stream : Buffer.concat(chunks)
 		fileEncSha256B64 = encodeBase64EncodedStringForUpload(fileEncSha256B64)
 		let media = MEDIA_PATH_MAP[mediaType]
-		if (newsletter) {
+		if(newsletter) {
 			media = media?.replace('/mms/', '/newsletter/newsletter-')
 		}
 
