@@ -48,8 +48,15 @@ export const makeNewsletterSocket = (config: SocketConfig) => {
 			content: [
                 {
                     tag: 'query',
-                    attrs: {query_id},
-                    content: encoder.encode(JSON.stringify({ variables: { newsletter_id: jid, ...content } }))
+                    attrs: { query_id },
+                    content: encoder.encode(
+						JSON.stringify({
+							variables: {
+								'newsletter_id': jid,
+								...content
+							}
+						})
+					)
                 }
             ]
 		})
@@ -67,12 +74,18 @@ export const makeNewsletterSocket = (config: SocketConfig) => {
         return await Promise.all(getAllBinaryNodeChildren(child!).map(async messageNode => {
             messageNode.attrs.from = child?.attrs.jid as string
 
-            const views = getBinaryNodeChild(messageNode, 'views_count')?.attrs?.count
+            const views = parseInt(getBinaryNodeChild(messageNode, 'views_count')?.attrs?.count || '0')
             const reactionNode = getBinaryNodeChild(messageNode, 'reactions')
             const reactions = getBinaryNodeChildren(reactionNode, 'reaction')
                 .map(({ attrs }) => ({ count: +attrs.count, code: attrs.code } as NewsletterReaction))
 
-            let data: NewsletterFetchedUpdate
+
+            const data: NewsletterFetchedUpdate = {
+				'server_id': messageNode.attrs.server_id,
+				views,
+				reactions
+			}
+
             if(type === 'messages') {
                 const { fullMessage: message, decrypt } = await decryptMessageNode(
                     messageNode,
@@ -81,27 +94,13 @@ export const makeNewsletterSocket = (config: SocketConfig) => {
                     signalRepository,
                     config.logger
                 )
-    
-                await decrypt()
-    
-                data = {
-                    server_id: messageNode.attrs.server_id,
-                    views: views ? +views : undefined,
-                    reactions,
-                    message
-                }
-    
-                return data
-            } else {
-                data = {
-                    server_id: messageNode.attrs.server_id,
-                    views: views ? +views : undefined,
-                    reactions
-                }
 
-                return data
+                await decrypt()
+
+                data.message = message
             }
 
+            return data
         }))
     }
 
@@ -186,9 +185,7 @@ export const makeNewsletterSocket = (config: SocketConfig) => {
                     name,
                     description: description ?? null,
                     picture: picture ? (await generateProfilePicture(picture)).img.toString('base64') : null,
-                    settings: {
-                        reaction_codes: { value: 'ALL' }
-                    }
+                    settings: null
                 }
             })
 
@@ -249,10 +246,11 @@ export const makeNewsletterSocket = (config: SocketConfig) => {
         },
 
         newsletterFetchMessages: async(type: 'invite' | 'jid', key: string, count: number, after?: number) => {
+            const afterStr: any = after?.toString()
             const result = await newsletterQuery(S_WHATSAPP_NET, 'get', [
                 {
                     tag: 'messages',
-                    attrs: { type, ...(type === 'invite' ? {key} : { jid: key }), count: count.toString(), after: after?.toString() || '100' }
+                    attrs: { type, ...(type === 'invite' ? { key } : { jid: key }), count: count.toString(), after: afterStr || '100' }
                 }
             ])
 
