@@ -1,5 +1,4 @@
-# Baileys - TypeScript/JavaScript WhatsApp Web API
-
+# Baileys - TypeScript/JavaScript
 <p align="center">
   <img src="https://files.catbox.moe/8rx24i.jpg" width="100%" style="max-width: 1200px; border-radius: 20px;" />
 </p>
