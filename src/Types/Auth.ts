@@ -110,4 +110,4 @@ export type SignalAuthState = {
 export type AuthenticationState = {
     creds: AuthenticationCreds
     keys: SignalKeyStore
-}
+      }
