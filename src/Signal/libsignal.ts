@@ -138,4 +138,4 @@ function signalStorage({ creds, keys }: SignalAuthState) {
 			}
 		}
 	}
-}
+        }
