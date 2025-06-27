@@ -136,7 +136,7 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 		offerContent.push({ tag: 'audio', attrs: { enc: 'opus', rate: '16000' }, content: undefined })
 		offerContent.push({ tag: 'audio', attrs: { enc: 'opus', rate: '8000' }, content: undefined })
 
-		if (isVideo) {
+		if(isVideo) {
 			offerContent.push({
 				tag: 'video',
 				attrs: {
@@ -168,7 +168,7 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 
 		offerContent.push({ tag: 'destination', attrs: {}, content: destinations })
 
-		if (shouldIncludeDeviceIdentity) {
+		if(shouldIncludeDeviceIdentity) {
 			offerContent.push({
 				tag: 'device-identity',
 				attrs: {},
@@ -206,13 +206,13 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 				to: callFrom,
 			},
 			content: [{
-			    tag: 'reject',
-			    attrs: {
+				tag: 'reject',
+				attrs: {
 					'call-id': callId,
 					'call-creator': callFrom,
 					count: '0',
-			    },
-			    content: undefined,
+				},
+				content: undefined,
 			}],
 		})
 		await query(stanza)
@@ -335,7 +335,7 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 		child: BinaryNode,
 		msg: Partial<proto.IWebMessageInfo>
 	) => {
-	    const participantJid = getBinaryNodeChild(child, 'participant')?.attrs?.jid || participant
+		const participantJid = getBinaryNodeChild(child, 'participant')?.attrs?.jid || participant
 		switch (child?.tag) {
 		case 'create':
 			const metadata = extractGroupMetadata(child)
@@ -445,32 +445,32 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 	}
 	
 	const handleNewsletterNotification = (id: string, node: BinaryNode) => {
-        const messages = getBinaryNodeChild(node, 'messages')
-        const message = getBinaryNodeChild(messages, 'message')!
+		const messages = getBinaryNodeChild(node, 'messages')
+		const message = getBinaryNodeChild(messages, 'message')!
 
-        const server_id = message.attrs.server_id
+		const serverId = message.attrs.server_id
 
-        const reactionsList = getBinaryNodeChild(message, 'reactions')
+		const reactionsList = getBinaryNodeChild(message, 'reactions')
 		const viewsList = getBinaryNodeChildren(message, 'views_count')
 
-        if(reactionsList) {
+		if(reactionsList) {
 			const reactions = getBinaryNodeChildren(reactionsList, 'reaction')
 			if(reactions.length === 0) {
-				ev.emit('newsletter.reaction', { id, server_id, reaction: { removed: true }})
+				ev.emit('newsletter.reaction', { id, 'server_id': serverId, reaction: { removed: true } })
 			}
 			reactions.forEach(item => {
-				ev.emit('newsletter.reaction', { id, server_id, reaction: { code: item.attrs?.code, count: +item.attrs?.count }})
+				ev.emit('newsletter.reaction', { id, 'server_id': serverId, reaction: { code: item.attrs?.code, count: +item.attrs?.count } })
 			})
-        }
+		}
 
-        if(viewsList.length) {
+		if(viewsList.length) {
 			viewsList.forEach(item => {
-            	ev.emit('newsletter.view', { id, server_id, count: +item.attrs.count })
+				ev.emit('newsletter.view', { id, 'server_id': serverId, count: +item.attrs.count })
 			})
-        }
+		}
 	}
 
-    const handleMexNewsletterNotification = (id: string, node: BinaryNode) => {
+	const handleMexNewsletterNotification = (id: string, node: BinaryNode) => {
 		const operation = node?.attrs.op_name
 		const content = JSON.parse(node?.content?.toString()!)
 
@@ -521,7 +521,7 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 			break
 		case 'newsletter':
 			handleNewsletterNotification(node.attrs.from, child)
-		    break
+			break
 		case 'mex':
 			handleMexNewsletterNotification(node.attrs.from, child)
 			break
@@ -744,10 +744,7 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 		const isLid = attrs.from.includes('lid')
 		const isNodeFromMe = areJidsSameUser(attrs.participant || attrs.from, isLid ? authState.creds.me?.lid : authState.creds.me?.id)
 		const remoteJid = !isNodeFromMe || isJidGroup(attrs.from) ? attrs.from : attrs.recipient
-		const fromMe = !attrs.recipient || (
-			(attrs.type === 'retry' || attrs.type === 'sender') 
-			&& isNodeFromMe
-		)
+		const fromMe = !attrs.recipient || ((attrs.type === 'retry' || attrs.type === 'sender') && isNodeFromMe)
 
 		const key: proto.IMessageKey = {
 			remoteJid,
@@ -950,6 +947,9 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 						} else {
 							// no type in the receipt => message delivered
 							let type: MessageReceiptType = undefined
+							if(msg.key.participant?.endsWith('@lid')) {
+								msg.key.participant = node.attrs.participant_pn || authState.creds.me!.id
+							}
 							let participant = msg.key.participant
 							if(category === 'peer') { // special peer message
 								type = 'peer_msg'
@@ -1077,7 +1077,7 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 	}
 
 	const handleBadAck = async({ attrs }: BinaryNode) => {
-		const key: WAMessageKey = { remoteJid: attrs.from, fromMe: true, id: attrs.id, server_id: attrs?.server_id }
+		const key: WAMessageKey = { remoteJid: attrs.from, fromMe: true, id: attrs.id, 'server_id': attrs?.server_id }
 		// current hypothesis is that if pash is sent in the ack
 		// it means -- the message hasn't reached all devices yet
 		// we'll retry sending the message here
