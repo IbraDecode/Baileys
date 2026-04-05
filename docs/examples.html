@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Socketon Examples - WhatsApp API Code Examples">
-    <title>Examples - Socketon v1.7.0</title>
+    <title>Examples - Socketon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -12,31 +14,30 @@
         <div>
             <div class="nav-brand">
                 <span class="logo">Socketon</span>
-                <span class="version">v1.7.0</span>
+                <span class="version">v1.8.26</span>
             </div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
-                <a href="api.html">API Reference</a>
+                <a href="api.html">API</a>
                 <a href="examples.html" class="active">Examples</a>
-                <a href="https://socketon.vercel.app" target="_blank">Website</a>
-                <a href="https://www.npmjs.com/package/socketon" target="_blank">NPM</a>
-                <a href="https://ibraa.web.id" target="_blank">Ibra Decode</a>
+                <a href="docs.html">Docs</a>
             </div>
         </div>
     </nav>
 
-    <main class="container">
-        <h1>Code Examples</h1>
+    <main>
+        <section class="section">
+            <div class="container">
+                <h1>Examples</h1>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">Code examples for common use cases</p>
 
-        <section class="example-section">
-            <h2>Basic Bot</h2>
-            <p>A simple bot that responds to messages.</p>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>bot.js</span>
-                    <button onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code class="language-javascript">const { makeWASocket, useMultiFileAuthState, DisconnectReason } = require('socketon');
+                <h2>Basic Bot</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>const { makeWASocket, useMultiFileAuthState, DisconnectReason } = require('socketon');
 const pino = require('pino');
 
 async function startBot() {
@@ -50,35 +51,19 @@ async function startBot() {
 
     sock.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect } = update;
-        
         if (connection === 'close') {
             const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
-            console.log('Connection closed, reconnecting:', shouldReconnect);
-            if (shouldReconnect) {
-                startBot();
-            }
+            if (shouldReconnect) startBot();
         } else if (connection === 'open') {
-            console.log('Bot is connected!');
+            console.log('Connected!');
         }
     });
 
-    sock.ev.on('messages.upsert', async ({ messages, type }) => {
-        if (type !== 'notify') return;
-        
+    sock.ev.on('messages.upsert', async ({ messages }) => {
         const msg = messages[0];
-        if (msg.key.fromMe) return;
-        
-        const text = msg.message?.conversation || 
-                     msg.message?.extendedTextMessage?.text || '';
-        
-        if (text === '!ping') {
-            await sock.sendMessage(msg.key.remoteJid, { text: 'Pong!' });
-        }
-        
-        if (text === '!menu') {
-            await sock.sendMessage(msg.key.remoteJid, { 
-                text: `*Bot Menu*\n\n!ping - Ping bot\n!menu - Show menu\n!sticker - Create sticker`
-            });
+        if (!msg.key.fromMe && msg.message) {
+            const text = msg.message.conversation || msg.message.extendedTextMessage?.text;
+            console.log('Message:', text);
         }
     });
 
@@ -86,525 +71,294 @@ async function startBot() {
 }
 
 startBot();</code></pre>
-            </div>
-        </section>
-
-        <section class="example-section">
-            <h2>Pairing Code Authentication</h2>
-            <p>Login without QR code using pairing code.</p>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>pairing.js</span>
-                    <button onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code class="language-javascript">const { makeWASocket, useMultiFileAuthState } = require('socketon');
-const pino = require('pino');
-const readline = require('readline');
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+                <h2>Auto Reply</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>const responses = {
+    'hello': 'Hi there!',
+    'hi': 'Hello!',
+    'help': 'Available commands: help, info',
+    'info': 'Socketon Bot v1.8.26'
+};
 
-async function start() {
-    const { state, saveCreds } = await useMultiFileAuthState('./auth');
-    
-    const sock = makeWASocket({
-        logger: pino({ level: 'silent' }),
-        auth: state,
-        printQRInTerminal: false
-    });
-
-    sock.ev.on('connection.update', async ({ connection, pairingCode }) => {
-        if (pairingCode) {
-            console.log('\n========================================');
-            console.log('Pairing Code:', pairingCode);
-            console.log('========================================\n');
-        }
-        
-        if (connection === 'open') {
-            console.log('Connected successfully!');
-        }
-    });
-
-    sock.ev.on('creds.update', saveCreds);
-}
-
-// Request pairing code for phone number
-rl.question('Enter phone number (e.g., 6281234567890): ', async (phone) => {
-    rl.close();
-    const { state, saveCreds } = await useMultiFileAuthState('./auth');
-    
-    const sock = makeWASocket({
-        logger: pino({ level: 'silent' }),
-        auth: state,
-        printQRInTerminal: false
-    });
-
-    const code = await sock.requestPairingCode(phone);
-    console.log('Pairing Code:', code);
-    
-    sock.ev.on('creds.update', saveCreds);
-});</code></pre>
-            </div>
-        </section>
-
-        <section class="example-section">
-            <h2>Send Media Messages</h2>
-            <p>Send various types of media messages.</p>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>media.js</span>
-                    <button onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code class="language-javascript">const fs = require('fs');
-
-// Send image
-await sock.sendMessage(jid, {
-    image: { url: './image.jpg' },
-    caption: 'Check out this image!',
-    jpegThumbnail: fs.readFileSync('./thumbnail.jpg')
-});
-
-// Send video
-await sock.sendMessage(jid, {
-    video: { url: './video.mp4' },
-    caption: 'Video caption',
-    gifPlayback: false
-});
-
-// Send audio
-await sock.sendMessage(jid, {
-    audio: { url: './audio.mp3' },
-    mimetype: 'audio/mp4',
-    ptt: true // Voice note
-});
-
-// Send document
-await sock.sendMessage(jid, {
-    document: { url: './document.pdf' },
-    mimetype: 'application/pdf',
-    fileName: 'document.pdf',
-    caption: 'Here is the document'
-});
-
-// Send sticker
-await sock.sendMessage(jid, {
-    sticker: fs.readFileSync('./sticker.webp')
-});
-
-// Send location
-await sock.sendMessage(jid, {
-    location: {
-        degreesLatitude: -6.2088,
-        degreesLongitude: 106.8456,
-        name: 'Jakarta',
-        address: 'Indonesia'
-    }
-});
-
-// Send contact
-const vcard = 'BEGIN:VCARD\n'
-    + 'VERSION:3.0\n'
-    + 'FN:John Doe\n'
-    + 'TEL;type=CELL;type=VOICE;waid=6281234567890:+6281234567890\n'
-    + 'END:VCARD';
-
-await sock.sendMessage(jid, {
-    contacts: {
-        displayName: 'John Doe',
-        contacts: [{ vcard }]
-    }
-});</code></pre>
-            </div>
-        </section>
-
-        <section class="example-section">
-            <h2>Interactive Messages</h2>
-            <p>Send buttons and list messages.</p>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>interactive.js</span>
-                    <button onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code class="language-javascript">// Send buttons
-await sock.sendMessage(jid, {
-    text: 'Choose an option:',
-    footer: 'Socketon Bot',
-    buttons: [
-        { buttonId: 'btn1', buttonText: { displayText: 'Button 1' }, type: 1 },
-        { buttonId: 'btn2', buttonText: { displayText: 'Button 2' }, type: 1 }
-    ],
-    headerType: 1
-});
-
-// Send list message
-await sock.sendMessage(jid, {
-    text: 'Select from list:',
-    footer: 'Socketon Bot',
-    title: 'Menu',
-    buttonText: 'View Options',
-    sections: [
-        {
-            title: 'Section 1',
-            rows: [
-                { title: 'Option 1', rowId: 'opt1', description: 'Description 1' },
-                { title: 'Option 2', rowId: 'opt2', description: 'Description 2' }
-            ]
-        },
-        {
-            title: 'Section 2',
-            rows: [
-                { title: 'Option 3', rowId: 'opt3', description: 'Description 3' }
-            ]
-        }
-    ]
-});
-
-// Handle button response
 sock.ev.on('messages.upsert', async ({ messages }) => {
     const msg = messages[0];
-    const buttonResponse = msg.message?.buttonsResponseMessage;
-    const listResponse = msg.message?.listResponseMessage;
-    
-    if (buttonResponse) {
-        console.log('Button clicked:', buttonResponse.selectedButtonId);
-    }
-    
-    if (listResponse) {
-        console.log('List selected:', listResponse.singleSelectReply?.selectedRowId);
+    if (!msg.key.fromMe && msg.message) {
+        const text = msg.message.conversation || msg.message.extendedTextMessage?.text;
+        const reply = responses[text.toLowerCase()];
+        
+        if (reply) {
+            await sock.sendMessage(msg.key.remoteJid, { text: reply }, { quoted: msg });
+        }
     }
 });</code></pre>
-            </div>
-        </section>
-
-        <section class="example-section">
-            <h2>Group Management</h2>
-            <p>Manage WhatsApp groups.</p>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>groups.js</span>
-                    <button onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code class="language-javascript">// Create group
-const group = await sock.groupCreate('My Group', ['6281234567890@s.whatsapp.net']);
-console.log('Group created:', group.id);
 
-// Get group metadata
-const metadata = await sock.groupMetadata(groupJid);
-console.log('Group name:', metadata.subject);
-console.log('Participants:', metadata.participants.length);
-
-// Add participants
-await sock.groupParticipantsUpdate(groupJid, [
-    '6281234567890@s.whatsapp.net',
-    '6281234567891@s.whatsapp.net'
-], 'add');
-
-// Remove participants
-await sock.groupParticipantsUpdate(groupJid, ['6281234567890@s.whatsapp.net'], 'remove');
-
-// Promote to admin
-await sock.groupParticipantsUpdate(groupJid, ['6281234567890@s.whatsapp.net'], 'promote');
-
-// Demote from admin
-await sock.groupParticipantsUpdate(groupJid, ['6281234567890@s.whatsapp.net'], 'demote');
-
-// Update group subject
-await sock.groupUpdateSubject(groupJid, 'New Group Name');
-
-// Update group description
-await sock.groupUpdateDescription(groupJid, 'Group description');
-
-// Get invite code
-const code = await sock.groupInviteCode(groupJid);
-console.log('Invite code:', code);
-console.log('Invite link:', `https://chat.whatsapp.com/${code}`);
-
-// Revoke invite code
-await sock.groupRevokeInvite(groupJid);
-
-// Join group via invite code
-const joinedGroupId = await sock.groupAcceptInvite('ABC123DEF456');
-
-// Leave group
-await sock.groupLeave(groupJid);
-
-// Set group to admins only
-await sock.groupSettingUpdate(groupJid, 'announcement');
-
-// Set group to all members can send
-await sock.groupSettingUpdate(groupJid, 'not_announcement');
-
-// Lock group info
-await sock.groupSettingUpdate(groupJid, 'locked');
-
-// Unlock group info
-await sock.groupSettingUpdate(groupJid, 'unlocked');</code></pre>
-            </div>
-        </section>
-
-        <section class="example-section">
-            <h2>Newsletter</h2>
-            <p>Work with WhatsApp newsletters/channels.</p>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>newsletter.js</span>
-                    <button onclick="copyCode(this)">Copy</button>
+                <h2>Simple Calculator</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>sock.ev.on('messages.upsert', async ({ messages }) => {
+    const msg = messages[0];
+    if (!msg.key.fromMe && msg.message) {
+        const text = msg.message.conversation || msg.message.extendedTextMessage?.text;
+        const match = text.match(/^(\d+)\s*([+\-*/])\s*(\d+)$/);
+        
+        if (match) {
+            const [, a, op, b] = match;
+            let result;
+            switch (op) {
+                case '+': result = parseInt(a) + parseInt(b); break;
+                case '-': result = parseInt(a) - parseInt(b); break;
+                case '*': result = parseInt(a) * parseInt(b); break;
+                case '/': result = parseInt(a) / parseInt(b); break;
+            }
+            await sock.sendMessage(msg.key.remoteJid, { text: `${a} ${op} ${b} = ${result}` }, { quoted: msg });
+        }
+    }
+});</code></pre>
                 </div>
-                <pre><code class="language-javascript">// Create newsletter
-const newsletter = await sock.newsletterCreate(
-    'My Newsletter',
-    'Newsletter description',
-    'ALL' // Reaction mode: 'ALL' | 'BASIC' | 'NONE'
-);
-console.log('Newsletter created:', newsletter.id);
 
-// Get newsletter metadata
-const meta = await sock.newsletterMetadata('jid', newsletterJid);
+                <h2>Message Forwarder</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>const forwardTo = '628xxxx@s.whatsapp.net';
 
-// Follow newsletter
-await sock.newsletterFollow(newsletterJid);
-
-// Unfollow newsletter
-await sock.newsletterUnfollow(newsletterJid);
-
-// Update newsletter
-await sock.newsletterUpdateName(newsletterJid, 'New Name');
-await sock.newsletterUpdateDescription(newsletterJid, 'New description');
-await sock.newsletterUpdatePicture(newsletterJid, { url: './image.jpg' });
-await sock.newsletterRemovePicture(newsletterJid);
-
-// React to newsletter message
-await sock.newsletterReactMessage(newsletterJid, 'serverMessageId', '👍');
-
-// Fetch newsletter messages
-const messages = await sock.newsletterFetchMessages('jid', newsletterJid, 50);
-console.log('Messages:', messages);
-
-// Delete newsletter
-await sock.newsletterDelete(newsletterJid);</code></pre>
-            </div>
-        </section>
-
-        <section class="example-section">
-            <h2>Profile Management</h2>
-            <p>Manage user profile and privacy settings.</p>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>profile.js</span>
-                    <button onclick="copyCode(this)">Copy</button>
+sock.ev.on('messages.upsert', async ({ messages }) => {
+    const msg = messages[0];
+    if (!msg.key.fromMe && msg.message) {
+        await sock.sendMessage(forwardTo, {
+            forward: msg
+        });
+        console.log('Message forwarded');
+    }
+});</code></pre>
                 </div>
-                <pre><code class="language-javascript">// Update profile name
-await sock.updateProfileName('New Name');
 
-// Update profile status/about
-await sock.updateProfileStatus('Available');
-
-// Update profile picture
-await sock.updateProfilePicture(sock.user.id, { url: './avatar.jpg' });
-
-// Remove profile picture
-await sock.removeProfilePicture(sock.user.id);
-
-// Get profile picture URL
-const ppUrl = await sock.profilePictureUrl(jid);
-console.log('Profile picture:', ppUrl);
-
-// Get user status
-const status = await sock.fetchStatus(jid);
-console.log('Status:', status);
-
-// Block contact
-await sock.updateBlockStatus(jid, 'block');
-
-// Unblock contact
-await sock.updateBlockStatus(jid, 'unblock');
-
-// Get blocked contacts
-const blocklist = await sock.fetchBlocklist();
-console.log('Blocked:', blocklist);
-
-// Privacy settings
-await sock.updateLastSeenPrivacy('all'); // 'all' | 'contacts' | 'contact_blacklist' | 'nobody'
-await sock.updateOnlinePrivacy('all'); // 'all' | 'match_last_seen'
-await sock.updateProfilePicturePrivacy('contacts');
-await sock.updateReadReceiptsPrivacy('all'); // 'all' | 'none'</code></pre>
-            </div>
-        </section>
-
-        <section class="example-section">
-            <h2>Download Media</h2>
-            <p>Download media from received messages.</p>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>download.js</span>
-                    <button onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code class="language-javascript">const { downloadMediaMessage } = require('socketon');
+                <h2>Media Downloader</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>const { downloadMediaMessage } = require('socketon').WAProto;
 const fs = require('fs');
 
 sock.ev.on('messages.upsert', async ({ messages }) => {
     const msg = messages[0];
-    
-    // Check if message contains media
-    const msgType = Object.keys(msg.message || {})[0];
-    
-    if (['imageMessage', 'videoMessage', 'audioMessage', 'documentMessage', 'stickerMessage'].includes(msgType)) {
-        try {
-            const buffer = await downloadMediaMessage(msg, 'buffer', {});
-            
-            // Get extension
-            const mime = msg.message[msgType].mimetype;
-            const ext = mime.split('/')[1];
-            
-            // Save to file
-            const filename = `./download_${Date.now()}.${ext}`;
-            fs.writeFileSync(filename, buffer);
-            
-            console.log('Media saved:', filename);
-        } catch (err) {
-            console.error('Download error:', err);
+    if (!msg.key.fromMe && msg.message) {
+        // Image
+        if (msg.message.imageMessage) {
+            const buffer = await downloadMediaMessage(msg);
+            fs.writeFileSync('image.jpg', buffer);
+        }
+        
+        // Video
+        if (msg.message.videoMessage) {
+            const buffer = await downloadMediaMessage(msg);
+            fs.writeFileSync('video.mp4', buffer);
+        }
+        
+        // Audio
+        if (msg.message.audioMessage) {
+            const buffer = await downloadMediaMessage(msg);
+            fs.writeFileSync('audio.ogg', buffer);
+        }
+        
+        // Document
+        if (msg.message.documentMessage) {
+            const buffer = await downloadMediaMessage(msg);
+            const fileName = msg.message.documentMessage.fileName || 'file';
+            fs.writeFileSync(fileName, buffer);
         }
     }
 });</code></pre>
-            </div>
-        </section>
-
-        <section class="example-section">
-            <h2>React to Messages</h2>
-            <p>React to messages with emojis.</p>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>react.js</span>
-                    <button onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code class="language-javascript">// React to a message
-await sock.sendMessage(jid, {
-    react: {
-        key: message.key,
-        text: '👍' // Emoji
-    }
-});
 
-// Remove reaction
-await sock.sendMessage(jid, {
-    react: {
-        key: message.key,
-        text: '' // Empty string to remove
+                <h2>Group Auto Welcome</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>sock.ev.on('messages.upsert', async ({ messages }) => {
+    const msg = messages[0];
+    if (!msg.message) return;
+    
+    const isGroup = msg.key.remoteJid.endsWith('@g.us');
+    if (!isGroup) return;
+    
+    // Handle group creation
+    if (msg.message.groupCreation) {
+        await sock.sendMessage(msg.key.remoteJid, {
+            text: 'Welcome to the group! 🎉'
+        });
+    }
+    
+    // Handle new member
+    if (msg.message.groupParticipantChanged) {
+        const participants = msg.message.groupParticipantChanged;
+        const action = participants.action; // 'add', 'remove', 'promote', 'demote'
+        const jid = participants.participants[0];
+        
+        if (action === 'add') {
+            await sock.sendMessage(msg.key.remoteJid, {
+                text: `Welcome @${jid.split('@')[0]}! 👋`
+            }, { mentions: [jid] });
+        }
     }
 });</code></pre>
-            </div>
-        </section>
-
-        <section class="example-section">
-            <h2>Reply & Quote Messages</h2>
-            <p>Reply to specific messages.</p>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>reply.js</span>
-                    <button onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code class="language-javascript">// Reply to a message
-await sock.sendMessage(jid, {
-    text: 'This is a reply!'
-}, {
-    quoted: message
-});
 
-// Forward a message
-await sock.sendMessage(newJid, {
-    forward: message,
-    force: false // Set true to appear as forwarded
+                <h2>Newsletter Bot</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>// Get newsletter ID from URL
+const nlId = await sock.newsletterId('https://newsletter.com/channel');
+
+// Follow
+await sock.newsletterFollow(nlId);
+
+// Listen to messages
+sock.ev.on('messages.upsert', async ({ messages, type }) => {
+    if (type !== 'notify') return;
+    
+    for (const msg of messages) {
+        if (msg.key.remoteJid.includes('@newsletter')) {
+            console.log('Newsletter message:', msg.message);
+            
+            // React
+            await sock.newsletterReactMessage(
+                msg.key.remoteJid,
+                msg.key.id,
+                '👍'
+            );
+            
+            // Reply
+            await sock.sendMessage(msg.key.remoteJid, {
+                text: 'Thanks for the update!'
+            });
+        }
+    }
 });</code></pre>
-            </div>
-        </section>
-
-        <section class="example-section">
-            <h2>Presence & Typing</h2>
-            <p>Send presence updates and typing indicators.</p>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>presence.js</span>
-                    <button onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code class="language-javascript">// Send typing indicator
-await sock.sendPresenceUpdate('composing', jid);
 
-// Send recording audio indicator
-await sock.sendPresenceUpdate('recording', jid);
+                <h2>Command Handler</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>const prefix = '!';
+const commands = {
+    ping: async (msg) => {
+        await sock.sendMessage(msg.key.remoteJid, { text: 'Pong!' }, { quoted: msg });
+    },
+    about: async (msg) => {
+        await sock.sendMessage(msg.key.remoteJid, { 
+            text: 'Socketon Bot\nVersion: 1.8.26\nDeveloper: Ibra Decode' 
+        }, { quoted: msg });
+    },
+    broadcast: async (msg, args) => {
+        // Broadcast to all contacts
+        const text = args.join(' ');
+        // ... implementation
+    }
+};
 
-// Stop typing
-await sock.sendPresenceUpdate('paused', jid);
+sock.ev.on('messages.upsert', async ({ messages }) => {
+    const msg = messages[0];
+    if (!msg.key.fromMe && msg.message) {
+        const text = msg.message.conversation || msg.message.extendedTextMessage?.text;
+        
+        if (text.startsWith(prefix)) {
+            const [cmd, ...args] = text.slice(1).split(' ');
+            if (commands[cmd]) {
+                await commands[cmd](msg, args);
+            }
+        }
+    }
+});</code></pre>
+                </div>
 
-// Set online
-await sock.sendPresenceUpdate('available');
+                <h2>Download & Send</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>// Download from URL and send
+const axios = require('axios');
+const { downloadMediaMessage } = require('socketon').WAProto;
 
-// Set offline
-await sock.sendPresenceUpdate('unavailable');
+async function sendFromUrl(jid, url, type = 'image') {
+    const response = await axios.get(url, { responseType: 'arraybuffer' });
+    const buffer = Buffer.from(response.data);
+    
+    await sock.sendMessage(jid, {
+        [type]: buffer
+    });
+}
 
-// Subscribe to contact presence
-await sock.presenceSubscribe(jid);
+// Usage
+await sendFromUrl('628xxxx@s.whatsapp.net', 'https://example.com/image.jpg', 'image');
+await sendFromUrl('628xxxx@s.whatsapp.net', 'https://example.com/video.mp4', 'video');</code></pre>
+                </div>
 
-// Listen for presence updates
+                <h2>Presence Subscribe</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>// Subscribe to presence
+sock.presenceSubscribe('628xxxx@s.whatsapp.net');
+
+// Listen to presence updates
 sock.ev.on('presence.update', ({ id, presences }) => {
-    for (const [participant, presence] of Object.entries(presences)) {
-        console.log(`${participant}: ${presence.lastKnownPresence}`);
-    }
-});</code></pre>
-            </div>
-        </section>
-
-        <section class="example-section">
-            <h2>Error Handling</h2>
-            <p>Handle connection errors properly.</p>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>error-handling.js</span>
-                    <button onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code class="language-javascript">const { DisconnectReason } = require('socketon');
-
-sock.ev.on('connection.update', async (update) => {
-    const { connection, lastDisconnect } = update;
-    
-    if (connection === 'close') {
-        const statusCode = lastDisconnect?.error?.output?.statusCode;
-        const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
-        
-        console.log('Connection closed. Status:', statusCode);
-        
-        switch (statusCode) {
-            case DisconnectReason.loggedOut:
-                console.log('Device logged out. Clear auth and scan QR again.');
-                // Clear auth folder
-                break;
-            case DisconnectReason.connectionReplaced:
-                console.log('Another device connected. This device disconnected.');
-                break;
-            case DisconnectReason.restartRequired:
-                console.log('Restart required. Reconnecting...');
-                startBot();
-                break;
-            case DisconnectReason.timedOut:
-                console.log('Connection timed out. Reconnecting...');
-                startBot();
-                break;
-            default:
-                if (shouldReconnect) {
-                    console.log('Reconnecting...');
-                    startBot();
-                }
+    for (const [participant, data] of Object.entries(presences)) {
+        console.log(`${participant}: ${data.lastKnownPresence}`);
+        if (data.lastSeen) {
+            console.log(`Last seen: ${new Date(data.lastSeen * 1000)}`);
         }
     }
 });</code></pre>
+                </div>
             </div>
         </section>
     </main>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Ibra Decode. All rights reserved.</p>
+            <div class="footer-brand">
+                <div class="logo">Socketon</div>
+                <p>WhatsApp API Library</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Docs</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="api.html">API</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Ibra Decode</p>
         </div>
     </footer>
 

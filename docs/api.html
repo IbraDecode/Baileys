@@ -1,808 +1,467 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Socketon API Reference - WhatsApp API Documentation">
-    <title>API Reference - Socketon v1.7.0</title>
+    <title>API Reference - Socketon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-brand">
-            <span class="logo">Socketon</span>
-            <span class="version">v1.7.0</span>
-        </div>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="api.html" class="active">API Reference</a>
-            <a href="examples.html">Examples</a>
-            <a href="https://www.npmjs.com/package/socketon" target="_blank">NPM</a>
+        <div>
+            <div class="nav-brand">
+                <span class="logo">Socketon</span>
+                <span class="version">v1.8.26</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="api.html" class="active">API</a>
+                <a href="examples.html">Examples</a>
+                <a href="docs.html">Docs</a>
+            </div>
         </div>
     </nav>
 
-    <main class="container api-container">
-        <aside class="sidebar">
-            <h3>Contents</h3>
-            <nav class="toc">
-                <a href="#socket-config">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                    Socket Configuration
-                </a>
-                <a href="#connection">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
-                    Connection Methods
-                </a>
-                <a href="#messages">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    Messages
-                </a>
-                <a href="#groups">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    Groups
-                </a>
-                <a href="#newsletter">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                    Newsletter
-                </a>
-                <a href="#profile">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    Profile
-                </a>
-                <a href="#chat">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    Chat Management
-                </a>
-                <a href="#media">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    Media
-                </a>
-                <a href="#events">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    Events
-                </a>
-                <a href="#types">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                    Types
-                </a>
-            </nav>
-        </aside>
+    <main>
+        <section class="section">
+            <div class="container">
+                <h1>API Reference</h1>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">Methods, events, and configuration</p>
 
-        <div class="api-content">
-            <h1>API Reference</h1>
-
-            <section id="socket-config" class="api-section">
-                <h2>Socket Configuration</h2>
-                <div class="api-method">
-                    <h3><code>makeWASocket(config)</code></h3>
-                    <p>Creates a WhatsApp socket instance with the given configuration.</p>
-                    <h4>Parameters</h4>
-                    <table class="params-table">
-                        <thead>
-                            <tr>
-                                <th>Property</th>
-                                <th>Type</th>
-                                <th>Default</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>auth</code></td>
-                                <td>AuthenticationState</td>
-                                <td>-</td>
-                                <td>Authentication state object for session persistence</td>
-                            </tr>
-                            <tr>
-                                <td><code>logger</code></td>
-                                <td>Logger</td>
-                                <td>pino()</td>
-                                <td>Pino logger instance</td>
-                            </tr>
-                            <tr>
-                                <td><code>printQRInTerminal</code></td>
-                                <td>boolean</td>
-                                <td>false</td>
-                                <td>Print QR code to terminal</td>
-                            </tr>
-                            <tr>
-                                <td><code>browser</code></td>
-                                <td>[string, string, string]</td>
-                                <td>['Chrome', 'Windows', '']</td>
-                                <td>Browser description</td>
-                            </tr>
-                            <tr>
-                                <td><code>version</code></td>
-                                <td>[number, number, number]</td>
-                                <td>[2, 3000, 1027934701]</td>
-                                <td>WhatsApp Web version</td>
-                            </tr>
-                            <tr>
-                                <td><code>connectTimeoutMs</code></td>
-                                <td>number</td>
-                                <td>60000</td>
-                                <td>Connection timeout in milliseconds</td>
-                            </tr>
-                            <tr>
-                                <td><code>keepAliveIntervalMs</code></td>
-                                <td>number</td>
-                                <td>30000</td>
-                                <td>Keep-alive ping interval</td>
-                            </tr>
-                            <tr>
-                                <td><code>markOnlineOnConnect</code></td>
-                                <td>boolean</td>
-                                <td>true</td>
-                                <td>Mark client as online on connect</td>
-                            </tr>
-                            <tr>
-                                <td><code>syncFullHistory</code></td>
-                                <td>boolean</td>
-                                <td>false</td>
-                                <td>Sync full message history</td>
-                            </tr>
-                            <tr>
-                                <td><code>getMessage</code></td>
-                                <td>Function</td>
-                                <td>-</td>
-                                <td>Callback to fetch message for retry</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="connection" class="api-section">
-                <h2>Connection Methods</h2>
-                
-                <div class="api-method">
-                    <h3><code>sock.requestPairingCode(phoneNumber)</code></h3>
-                    <p>Request a pairing code for authentication.</p>
-                    <h4>Parameters</h4>
-                    <table class="params-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>phoneNumber</code></td>
-                                <td>string</td>
-                                <td>Phone number with country code (e.g., '6281234567890')</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <h4>Returns</h4>
-                    <p><code>Promise&lt;string&gt;</code> - 8-character pairing code</p>
+                <h2>Imports</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                    </div>
+                    <pre><code>const {
+    makeWASocket,
+    useMultiFileAuthState,
+    useSingleFileAuthState,
+    DisconnectReason,
+    MessageRetryMap,
+    fetchLatestBaileysVersion,
+    DEFAULT_CONNECTION_CONFIG,
+    Browsers
+} = require('socketon');</code></pre>
                 </div>
 
-                <div class="api-method">
-                    <h3><code>sock.logout()</code></h3>
-                    <p>Logout from WhatsApp and clear session.</p>
-                    <h4>Returns</h4>
-                    <p><code>Promise&lt;void&gt;</code></p>
+                <h2>Connection</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>const { makeWASocket, useMultiFileAuthState, DisconnectReason } = require('socketon');
+const pino = require('pino');
+
+async function startBot() {
+    const { state, saveCreds } = await useMultiFileAuthState('./auth');
+    
+    const sock = makeWASocket({
+        logger: pino({ level: 'silent' }),
+        auth: state,
+        printQRInTerminal: true,
+        browser: Browsers('Chrome'),
+        connectTimeoutMs: 60000,
+    });
+
+    sock.ev.on('connection.update', (update) => {
+        const { connection, lastDisconnect, qr } = update;
+        if (qr) console.log('QR:', qr);
+        if (connection === 'close') {
+            const reason = lastDisconnect?.error?.output?.statusCode;
+            if (reason !== DisconnectReason.loggedOut) startBot();
+        }
+    });
+
+    sock.ev.on('creds.update', saveCreds);
+}</code></pre>
                 </div>
 
-                <div class="api-method">
-                    <h3><code>sock.end(error?)</code></h3>
-                    <p>End the socket connection.</p>
-                    <h4>Parameters</h4>
-                    <table class="params-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>error</code></td>
-                                <td>Error</td>
-                                <td>Optional error object</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.onWhatsApp(...jids)</code></h3>
-                    <p>Check if phone numbers are registered on WhatsApp.</p>
-                    <h4>Returns</h4>
-                    <p><code>Promise&lt;Array&lt;{exists: boolean, jid: string}&gt;&gt;</code></p>
-                </div>
-            </section>
-
-            <section id="messages" class="api-section">
-                <h2>Messages</h2>
-
-                <div class="api-method">
-                    <h3><code>sock.sendMessage(jid, content, options?)</code></h3>
-                    <p>Send a message to a chat.</p>
-                    <h4>Parameters</h4>
-                    <table class="params-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>jid</code></td>
-                                <td>string</td>
-                                <td>Recipient JID (user@s.whatsapp.net or group@g.us)</td>
-                            </tr>
-                            <tr>
-                                <td><code>content</code></td>
-                                <td>AnyMessageContent</td>
-                                <td>Message content object</td>
-                            </tr>
-                            <tr>
-                                <td><code>options</code></td>
-                                <td>MiscMessageGenerationOptions</td>
-                                <td>Optional message options</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <h4>Content Types</h4>
-                    <div class="code-block">
-                        <pre><code class="language-javascript">// Text
-await sock.sendMessage(jid, { text: 'Hello!' });
+                <h2>Send Message</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>// Text
+await sock.sendMessage('628xxxx@s.whatsapp.net', { text: 'Hello!' });
 
 // Image
-await sock.sendMessage(jid, { 
-    image: { url: './image.jpg' },
-    caption: 'Image caption'
+await sock.sendMessage('628xxxx@s.whatsapp.net', {
+    image: { url: 'https://example.com/image.jpg' },
+    caption: 'Caption'
 });
 
 // Video
-await sock.sendMessage(jid, { 
-    video: { url: './video.mp4' },
-    caption: 'Video caption'
+await sock.sendMessage('628xxxx@s.whatsapp.net', {
+    video: { url: 'https://example.com/video.mp4' },
+    caption: 'Caption'
 });
 
 // Audio
-await sock.sendMessage(jid, { 
-    audio: { url: './audio.mp3' },
-    mimetype: 'audio/mp4'
+await sock.sendMessage('628xxxx@s.whatsapp.net', {
+    audio: { url: 'https://example.com/audio.mp3' }
 });
 
 // Document
-await sock.sendMessage(jid, { 
-    document: { url: './file.pdf' },
-    mimetype: 'application/pdf',
-    fileName: 'document.pdf'
+await sock.sendMessage('628xxxx@s.whatsapp.net', {
+    document: { url: 'https://example.com/file.pdf' },
+    fileName: 'file.pdf'
 });
 
 // Sticker
-await sock.sendMessage(jid, { 
-    sticker: fs.readFileSync('./sticker.webp')
+await sock.sendMessage('628xxxx@s.whatsapp.net', {
+    sticker: { url: 'https://example.com/sticker.webp' }
 });
 
 // Location
-await sock.sendMessage(jid, { 
-    location: { 
-        degreesLatitude: -6.200000,
-        degreesLongitude: 106.816666,
-        name: 'Jakarta'
-    }
+await sock.sendMessage('628xxxx@s.whatsapp.net', {
+    location: { degreesLatitude: -6.2, degreesLongitude: 106.8 }
 });
 
 // Contact
-await sock.sendMessage(jid, { 
-    contacts: { 
-        displayName: 'Contact',
-        contacts: [{ vcard: 'BEGIN:VCARD...' }]
+await sock.sendMessage('628xxxx@s.whatsapp.net', {
+    contacts: {
+        contacts: [{
+            displayName: 'John',
+            contacts: [{ waid: '628xxxx', phone: '628xxxx' }]
+        }]
     }
-});
+});</code></pre>
+                </div>
 
-// Reaction
-await sock.sendMessage(jid, { 
-    react: { 
-        key: message.key,
-        text: '👍'
-    }
-});
-
-// Reply
-await sock.sendMessage(jid, { 
-    text: 'Reply message'
-}, { quoted: message });</code></pre>
+                <h2>Reply</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
                     </div>
+                    <pre><code>sock.ev.on('messages.upsert', async ({ messages }) => {
+    const msg = messages[0];
+    if (!msg.key.fromMe && msg.message) {
+        // Reply text
+        await sock.sendMessage(msg.key.remoteJid, {
+            text: 'Reply message'
+        }, { quoted: msg });
+        
+        // Reply with media
+        await sock.sendMessage(msg.key.remoteJid, {
+            image: { url: 'https://example.com/image.jpg' }
+        }, { quoted: msg });
+    }
+});</code></pre>
                 </div>
 
-                <div class="api-method">
-                    <h3><code>sock.readMessages(keys)</code></h3>
-                    <p>Mark messages as read.</p>
-                    <h4>Parameters</h4>
-                    <table class="params-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>keys</code></td>
-                                <td>IMessageKey[]</td>
-                                <td>Array of message keys to mark as read</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <h2>React & Forward</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>// React
+await sock.sendMessage('628xxxx@s.whatsapp.net', {
+    react: { key: msg.key, text: '👍' }
+});
+
+// Forward
+await sock.sendMessage('target@s.whatsapp.net', {
+    forward: msg
+});
+
+// Delete
+await sock.sendMessage('628xxxx@s.whatsapp.net', {
+    delete: msg.key
+});</code></pre>
                 </div>
 
-                <div class="api-method">
-                    <h3><code>sock.sendPresenceUpdate(type, toJid?)</code></h3>
-                    <p>Send presence update (typing, recording, etc.).</p>
-                    <h4>Parameters</h4>
-                    <table class="params-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>type</code></td>
-                                <td>WAPresence</td>
-                                <td>'unavailable' | 'available' | 'composing' | 'recording' | 'paused'</td>
-                            </tr>
-                            <tr>
-                                <td><code>toJid</code></td>
-                                <td>string</td>
-                                <td>Optional target JID</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="groups" class="api-section">
                 <h2>Groups</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>// Create
+const group = await sock.groupCreate('Group Name', ['628xxxx@s.whatsapp.net']);
 
-                <div class="api-method">
-                    <h3><code>sock.groupMetadata(jid)</code></h3>
-                    <p>Get group metadata.</p>
-                    <h4>Returns</h4>
-                    <p><code>Promise&lt;GroupMetadata&gt;</code></p>
+// Add
+await sock.groupParticipantsUpdate('group@s.whatsapp.net', ['628xxxx@s.whatsapp.net'], 'add');
+
+// Remove
+await sock.groupParticipantsUpdate('group@s.whatsapp.net', ['628xxxx@s.whatsapp.net'], 'remove');
+
+// Promote
+await sock.groupParticipantsUpdate('group@s.whatsapp.net', ['628xxxx@s.whatsapp.net'], 'promote');
+
+// Demote
+await sock.groupParticipantsUpdate('group@s.whatsapp.net', ['628xxxx@s.whatsapp.net'], 'demote');
+
+// Subject
+await sock.groupUpdateSubject('group@s.whatsapp.net', 'New Name');
+
+// Description
+await sock.groupUpdateDescription('group@s.whatsapp.net', 'Description');
+
+// Invite code
+const code = await sock.groupInviteCode('group@s.whatsapp.net');
+await sock.groupAcceptInvite(code);
+
+// Leave
+await sock.groupLeave('group@s.whatsapp.net');
+
+// Metadata
+const meta = await sock.groupMetadata('group@s.whatsapp.net');</code></pre>
                 </div>
 
-                <div class="api-method">
-                    <h3><code>sock.groupCreate(subject, participants)</code></h3>
-                    <p>Create a new group.</p>
-                    <h4>Parameters</h4>
-                    <table class="params-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>subject</code></td>
-                                <td>string</td>
-                                <td>Group name</td>
-                            </tr>
-                            <tr>
-                                <td><code>participants</code></td>
-                                <td>string[]</td>
-                                <td>Array of participant JIDs</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <h4>Returns</h4>
-                    <p><code>Promise&lt;GroupMetadata&gt;</code></p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.groupParticipantsUpdate(jid, participants, action)</code></h3>
-                    <p>Update group participants.</p>
-                    <h4>Parameters</h4>
-                    <table class="params-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>jid</code></td>
-                                <td>string</td>
-                                <td>Group JID</td>
-                            </tr>
-                            <tr>
-                                <td><code>participants</code></td>
-                                <td>string[]</td>
-                                <td>Array of participant JIDs</td>
-                            </tr>
-                            <tr>
-                                <td><code>action</code></td>
-                                <td>string</td>
-                                <td>'add' | 'remove' | 'promote' | 'demote'</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.groupUpdateSubject(jid, subject)</code></h3>
-                    <p>Update group subject/name.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.groupUpdateDescription(jid, description)</code></h3>
-                    <p>Update group description.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.groupInviteCode(jid)</code></h3>
-                    <p>Get group invite code.</p>
-                    <h4>Returns</h4>
-                    <p><code>Promise&lt;string&gt;</code></p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.groupRevokeInvite(jid)</code></h3>
-                    <p>Revoke group invite code and generate new one.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.groupAcceptInvite(code)</code></h3>
-                    <p>Join a group via invite code.</p>
-                    <h4>Returns</h4>
-                    <p><code>Promise&lt;string&gt;</code> - Group JID</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.groupLeave(jid)</code></h3>
-                    <p>Leave a group.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.groupSettingUpdate(jid, setting)</code></h3>
-                    <p>Update group settings.</p>
-                    <h4>Parameters</h4>
-                    <table class="params-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>setting</code></td>
-                                <td>string</td>
-                                <td>'announcement' | 'not_announcement' | 'locked' | 'unlocked'</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="newsletter" class="api-section">
                 <h2>Newsletter</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>// ID from URL
+const id = await sock.newsletterId('https://newsletter.com/channel');
 
-                <div class="api-method">
-                    <h3><code>sock.newsletterCreate(name, description, reaction_codes)</code></h3>
-                    <p>Create a new newsletter.</p>
-                    <h4>Returns</h4>
-                    <p><code>Promise&lt;NewsletterMetadata&gt;</code></p>
+// Follow
+await sock.newsletterFollow(id);
+
+// Unfollow
+await sock.newsletterUnfollow(id);
+
+// Mute/Unmute
+await sock.newsletterMute(id);
+await sock.newsletterUnmute(id);
+
+// Metadata
+const meta = await sock.newsletterMetadata('id', id);
+
+// Messages
+const msgs = await sock.newsletterFetchMessages('id', id, 10);
+
+// Send
+await sock.sendMessage(id, { text: 'Hello!' });
+
+// React
+await sock.newsletterReactMessage(id, serverId, '👍');
+
+// Create
+const newNL = await sock.newsletterCreate({ name: 'Channel', description: 'Desc' });</code></pre>
                 </div>
 
-                <div class="api-method">
-                    <h3><code>sock.newsletterMetadata(type, key, role?)</code></h3>
-                    <p>Get newsletter metadata.</p>
-                    <h4>Parameters</h4>
-                    <table class="params-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>type</code></td>
-                                <td>string</td>
-                                <td>'invite' | 'jid'</td>
-                            </tr>
-                            <tr>
-                                <td><code>key</code></td>
-                                <td>string</td>
-                                <td>Invite code or JID</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.newsletterFollow(jid)</code></h3>
-                    <p>Follow a newsletter.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.newsletterUnfollow(jid)</code></h3>
-                    <p>Unfollow a newsletter.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.newsletterUpdateName(jid, name)</code></h3>
-                    <p>Update newsletter name.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.newsletterUpdateDescription(jid, description)</code></h3>
-                    <p>Update newsletter description.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.newsletterUpdatePicture(jid, content)</code></h3>
-                    <p>Update newsletter picture.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.newsletterRemovePicture(jid)</code></h3>
-                    <p>Remove newsletter picture.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.newsletterReactMessage(jid, serverId, code?)</code></h3>
-                    <p>React to a newsletter message.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.newsletterFetchMessages(type, key, count, after?)</code></h3>
-                    <p>Fetch newsletter messages.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.newsletterDelete(jid)</code></h3>
-                    <p>Delete a newsletter.</p>
-                </div>
-            </section>
-
-            <section id="profile" class="api-section">
                 <h2>Profile</h2>
-
-                <div class="api-method">
-                    <h3><code>sock.updateProfileName(name)</code></h3>
-                    <p>Update profile name.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.updateProfileStatus(status)</code></h3>
-                    <p>Update profile about/status.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.updateProfilePicture(jid, content)</code></h3>
-                    <p>Update profile picture.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.removeProfilePicture(jid)</code></h3>
-                    <p>Remove profile picture.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.profilePictureUrl(jid, type?, timeoutMs?)</code></h3>
-                    <p>Get profile picture URL.</p>
-                    <h4>Returns</h4>
-                    <p><code>Promise&lt;string&gt;</code></p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.fetchStatus(jid)</code></h3>
-                    <p>Get user's about/status.</p>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.updateBlockStatus(jid, action)</code></h3>
-                    <p>Block or unblock a contact.</p>
-                    <h4>Parameters</h4>
-                    <table class="params-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>action</code></td>
-                                <td>string</td>
-                                <td>'block' | 'unblock'</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>sock.fetchBlocklist()</code></h3>
-                    <p>Get list of blocked contacts.</p>
-                    <h4>Returns</h4>
-                    <p><code>Promise&lt;string[]&gt;</code></p>
-                </div>
-            </section>
-
-            <section id="chat" class="api-section">
-                <h2>Chat Management</h2>
-
-                <div class="api-method">
-                    <h3><code>sock.chatModify(modification, jid)</code></h3>
-                    <p>Modify chat (archive, pin, mute, etc.).</p>
-                    <div class="code-block">
-                        <pre><code class="language-javascript">// Archive chat
-await sock.chatModify({ archive: true }, jid);
-
-// Pin chat
-await sock.chatModify({ pin: true }, jid);
-
-// Mute chat (8 hours)
-await sock.chatModify({ mute: 8 * 60 * 60 }, jid);
-
-// Unmute chat
-await sock.chatModify({ mute: null }, jid);
-
-// Clear messages
-await sock.chatModify({ clear: true }, jid);
-
-// Delete chat
-await sock.chatModify({ delete: true }, jid);</code></pre>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
                     </div>
+                    <pre><code>// Name
+await sock.updateProfileName('My Name');
+
+// Picture
+await sock.updateProfilePicture('628xxxx@s.whatsapp.net', { url: 'photo.jpg' });
+
+// Status
+await sock.updateProfileStatus('My status');
+
+// Picture URL
+const url = await sock.profilePictureUrl('628xxxx@s.whatsapp.net');
+
+// Block/Unblock
+await sock.updateBlockStatus('628xxxx@s.whatsapp.net', 'block');
+await sock.updateBlockStatus('628xxxx@s.whatsapp.net', 'unblock');
+
+// Blocklist
+const list = await sock.fetchBlocklist();</code></pre>
                 </div>
 
-                <div class="api-method">
-                    <h3><code>sock.star(jid, messages, star)</code></h3>
-                    <p>Star or unstar messages.</p>
-                </div>
-            </section>
-
-            <section id="media" class="api-section">
-                <h2>Media</h2>
-
-                <div class="api-method">
-                    <h3><code>downloadMediaMessage(message, type, options)</code></h3>
-                    <p>Download media from a message.</p>
-                    <div class="code-block">
-                        <pre><code class="language-javascript">const { downloadMediaMessage } = require('socketon');
-
-const buffer = await downloadMediaMessage(message, 'buffer', {});
-fs.writeFileSync('./download.jpg', buffer);</code></pre>
+                <h2>Privacy</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
                     </div>
-                </div>
-            </section>
+                    <pre><code>// Get settings
+const privacy = await sock.fetchPrivacySettings();
 
-            <section id="events" class="api-section">
+// Update (values: 'all', 'contacts', 'none')
+await sock.updateLastSeenPrivacy('all');
+await sock.updateOnlinePrivacy('all');
+await sock.updateProfilePicturePrivacy('all');
+await sock.updateStatusPrivacy('all');
+await sock.updateReadReceiptsPrivacy('all');
+await sock.updateGroupsAddPrivacy('all');</code></pre>
+                </div>
+
+                <h2>Business</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>// Profile
+const biz = await sock.getBusinessProfile('628xxxx@s.whatsapp.net');
+
+// Catalog
+const catalog = await sock.getCatalog({ jid: '628xxxx@s.whatsapp.net' });
+
+// Collections
+const collections = await sock.getCollections('628xxxx@s.whatsapp.net');
+
+// Order
+const order = await sock.getOrderDetails(orderId);</code></pre>
+                </div>
+
+                <h2>Presence</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>// Subscribe
+sock.presenceSubscribe('628xxxx@s.whatsapp.net');
+
+// Update
+await sock.sendPresenceUpdate('available');
+await sock.sendPresenceUpdate('composing', '628xxxx@s.whatsapp.net');
+await sock.sendPresenceUpdate('recording', '628xxxx@s.whatsapp.net');
+await sock.sendPresenceUpdate('paused', '628xxxx@s.whatsapp.net');
+
+// Listen
+sock.ev.on('presence.update', ({ id, presences }) => {
+    console.log(id, presences);
+});</code></pre>
+                </div>
+
+                <h2>Chat</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>javascript</span>
+                        <button onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code>// Archive
+await sock.chatModify({ archive: true }, '628xxxx@s.whatsapp.net');
+
+// Pin
+await sock.chatModify({ pin: true }, '628xxxx@s.whatsapp.net');
+
+// Mute (seconds)
+await sock.chatModify({ mute: 3600 }, '628xxxx@s.whatsapp.net');
+
+// Delete
+await sock.chatModify({ delete: true }, '628xxxx@s.whatsapp.net');
+
+// Star
+await sock.star('628xxxx@s.whatsapp.net', [msgId], true);
+
+// Labels
+await sock.addChatLabel('628xxxx@s.whatsapp.net', labelId);
+await sock.removeChatLabel('628xxxx@s.whatsapp.net', labelId);</code></pre>
+                </div>
+
                 <h2>Events</h2>
-                <p>All events are listened via <code>sock.ev.on(event, callback)</code></p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>connection.update</code></td>
+                            <td>Connection state: { connection, qr, lastDisconnect }</td>
+                        </tr>
+                        <tr>
+                            <td><code>messages.upsert</code></td>
+                            <td>New messages: { messages, type }</td>
+                        </tr>
+                        <tr>
+                            <td><code>messages.update</code></td>
+                            <td>Message updates: [{ key, update }]</td>
+                        </tr>
+                        <tr>
+                            <td><code>presence.update</code></td>
+                            <td>Presence changes: { id, presences }</td>
+                        </tr>
+                        <tr>
+                            <td><code>chats.upsert</code></td>
+                            <td>New chats</td>
+                        </tr>
+                        <tr>
+                            <td><code>chats.update</code></td>
+                            <td>Chat updates</td>
+                        </tr>
+                        <tr>
+                            <td><code>contacts.upsert</code></td>
+                            <td>New contacts</td>
+                        </tr>
+                        <tr>
+                            <td><code>groups.update</code></td>
+                            <td>Group updates</td>
+                        </tr>
+                        <tr>
+                            <td><code>call</code></td>
+                            <td>Calls: [{ id, from, isVideo, isGroup }]</td>
+                        </tr>
+                        <tr>
+                            <td><code>creds.update</code></td>
+                            <td>Credentials updated</td>
+                        </tr>
+                        <tr>
+                            <td><code>newsletter.reaction</code></td>
+                            <td>Newsletter reactions</td>
+                        </tr>
+                        <tr>
+                            <td><code>blocklist.update</code></td>
+                            <td>Blocklist: { blocklist, type }</td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                <div class="api-method">
-                    <h3><code>connection.update</code></h3>
-                    <p>Fired when connection state changes.</p>
-                    <div class="code-block">
-                        <pre><code class="language-javascript">sock.ev.on('connection.update', (update) => {
-    const { connection, lastDisconnect, qr, pairingCode } = update;
-    
-    if (qr) {
-        // Show QR code
-    }
-    
-    if (pairingCode) {
-        // Show pairing code
-    }
-    
-    if (connection === 'close') {
-        // Handle disconnect
-    } else if (connection === 'open') {
-        // Connected
-    }
-});</code></pre>
-                    </div>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>messages.upsert</code></h3>
-                    <p>Fired when messages are received or sent.</p>
-                    <div class="code-block">
-                        <pre><code class="language-javascript">sock.ev.on('messages.upsert', ({ messages, type }) => {
-    // type: 'notify' (new message) | 'append' | 'prepend'
-    console.log('New message:', messages[0]);
-});</code></pre>
-                    </div>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>presence.update</code></h3>
-                    <p>Fired when contact presence changes.</p>
-                    <div class="code-block">
-                        <pre><code class="language-javascript">sock.ev.on('presence.update', ({ id, presences }) => {
-    // id: chat JID
-    // presences: { participantJid: { lastKnownPresence, lastSeen } }
-});</code></pre>
-                    </div>
-                </div>
-
-                <div class="api-method">
-                    <h3><code>creds.update</code></h3>
-                    <p>Fired when credentials are updated (save your auth state).</p>
-                    <div class="code-block">
-                        <pre><code class="language-javascript">sock.ev.on('creds.update', saveCreds);</code></pre>
-                    </div>
-                </div>
-            </section>
-
-            <section id="types" class="api-section">
-                <h2>Types</h2>
-
-                <div class="api-method">
-                    <h3>DisconnectReason</h3>
-                    <table class="params-table">
-                        <thead>
-                            <tr>
-                                <th>Reason</th>
-                                <th>Code</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>connectionClosed</code></td>
-                                <td>428</td>
-                                <td>Connection closed</td>
-                            </tr>
-                            <tr>
-                                <td><code>connectionLost</code></td>
-                                <td>408</td>
-                                <td>Connection lost</td>
-                            </tr>
-                            <tr>
-                                <td><code>connectionReplaced</code></td>
-                                <td>440</td>
-                                <td>Logged in from another device</td>
-                            </tr>
-                            <tr>
-                                <td><code>loggedOut</code></td>
-                                <td>401</td>
-                                <td>Session logged out</td>
-                            </tr>
-                            <tr>
-                                <td><code>restartRequired</code></td>
-                                <td>515</td>
-                                <td>Restart required</td>
-                            </tr>
-                            <tr>
-                                <td><code>timedOut</code></td>
-                                <td>408</td>
-                                <td>Connection timed out</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
+                <h2>Disconnect Reasons</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Code</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>connectionClosed</code></td><td>428</td></tr>
+                        <tr><td><code>connectionLost</code></td><td>408</td></tr>
+                        <tr><td><code>connectionReplaced</code></td><td>440</td></tr>
+                        <tr><td><code>timedOut</code></td><td>408</td></tr>
+                        <tr><td><code>loggedOut</code></td><td>401</td></tr>
+                        <tr><td><code>badSession</code></td><td>500</td></tr>
+                        <tr><td><code>restartRequired</code></td><td>515</td></tr>
+                        <tr><td><code>multideviceMismatch</code></td><td>411</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Ibra Decode. All rights reserved.</p>
+            <div class="footer-brand">
+                <div class="logo">Socketon</div>
+                <p>WhatsApp API Library</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Docs</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="examples.html">Examples</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Ibra Decode</p>
         </div>
     </footer>
 
