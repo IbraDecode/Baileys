@@ -1,6 +1,6 @@
 {
     "name": "socketon",
-    "version": "1.8.27",
+    "version": "1.8.28",
     "description": "WhatsApp API Modification By Ibra Decode",
     "publishConfig": {
         "access": "public"
